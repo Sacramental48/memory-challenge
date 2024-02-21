@@ -18,7 +18,7 @@
                     class="wrapper__square" 
                     :style="{
                         'backgroundColor': getColor(index), 
-                        'opacity': highlitedSquares.includes(index) ? 1 : 0.5,
+                        'opacity': highlitedSquares.includes(index) ? 1 : 0.4,
                     }" 
                     @click="chooseCorrectSquare(index)"
                     v-for="(_, index) in 4" :key="index"
@@ -41,6 +41,7 @@ export default {
             isStartRound: false,
             isNextStep: false,
             isGameOver: false,
+            timer: {'level-easy': 1500, 'level-meduim': 1000, 'level-hard': 400}
         }
     },
     methods: {
@@ -56,36 +57,31 @@ export default {
 
                 setTimeout(() => {
                     this.generateSequence();
-                }, 500);
+                }, 0);
             }
-           
         },
 
-        generateSequence() {
+        async generateSequence() {
             this.rounds++;
-            this.highlitedSquares = [];
-
 
             const randomIndex = Math.floor(Math.random() * 4);
             this.step.push(randomIndex);
 
-            const addColorWithDelay = (index) => {
-                if (index >= this.step.length) return;
+            for(let item of this.step) {
 
-                setTimeout(() => {
-                    this.highlitedSquares.push(this.step[index]);
-                    addColorWithDelay(index + 1);
-                }, 1000 * index);
-            };
-
-            addColorWithDelay(0);
-
-            if(this.highlitedSquares) {
-                setTimeout(() => {
-                    this.highlitedSquares = [];
-                }, 1000);
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        this.highlitedSquares.push(item);
+                        resolve();
+                    }, this.timer['level-easy']);
+                });
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        this.highlitedSquares = [];
+                        resolve();
+                    }, 500);
+                });
             }
-
             return this.step;
         },
 
@@ -97,35 +93,30 @@ export default {
             this.isGameOver = true;
         },
 
-        nextStep() {    
+        nextStep() {
             setTimeout(() => {
                 this.generateSequence();
                 this.myChoose = [];
-            }, 500);
+            }, 1000);
         },
 
         chooseCorrectSquare(index) {
-            if(this.isStartRound) {
+             if (this.isStartRound) {
                 this.myChoose.push(index);
-                for(let i = 0; i < this.myChoose.length; i++) {
-                    if(this.isArrayEqual(this.myChoose, this.step)) {
+                if (this.myChoose.length === this.step.length) {
+                    if (this.isArrayEqual(this.myChoose, this.step)) {
                         this.isNextStep = true;
                         this.nextStep();
                         return true;
                     } else {
                         this.isStartRound = false;
                         this.isGameOver = true;
-                        return true;
-                    }       
+                        return false;
+                    }
                 }
             }
         },
-
-        isArrayEqual(arr1, arr2) {        
-            if (arr1.length !== arr2.length) {
-                return false;
-            }
-
+        isArrayEqual(arr1, arr2) {
             for(let i = 0; i < arr1.length; i++) {
                 if(arr1[i] !== arr2[i]) {
                     return false;
@@ -136,4 +127,3 @@ export default {
     }
 }
 </script>
-
