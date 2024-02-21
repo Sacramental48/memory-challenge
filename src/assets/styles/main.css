@@ -1,0 +1,40 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.wrapper__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wrapper__start {
+    width: 50%;
+    height: 30px;
+    border: none;
+    background-color: #000000;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.wrapper__field {
+    display: flex;
+    gap: 5px;
+}
+
+.wrapper__square {
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.wrapper__square:hover {
+    filter: brightness(90%);
+}
