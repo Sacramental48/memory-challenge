@@ -1,7 +1,6 @@
 .wrapper {
     display: flex;
     justify-content: center;
-    align-items: center;
     height: 100vh;
 }
 
@@ -11,30 +10,55 @@
     align-items: center;
 }
 
-.wrapper__start {
-    width: 50%;
+.wrapper__container button {
     height: 30px;
     border: none;
-    background-color: #000000;
     border-radius: 6px;
     cursor: pointer;
     color: #ffffff;
+    font-size: 20px;
+}
+
+.wrapper__start {
+    background-color: #1ad640;
+}
+
+.wrapper__end {
+    background-color: #ca1919;
+}
+
+.wrapper__next {
+    background-color: #1ad640;
+}
+
+.wrapper__buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.wrapper__group {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper__output {
+    margin-bottom: 20px;
 }
 
 .wrapper__field {
     display: flex;
-    gap: 5px;
+    gap: 20px;
 }
 
 .wrapper__square {
     display: block;
     width: 100px;
     height: 100px;
-    border: 1px solid black;
     border-radius: 4px;
     cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .wrapper__square:hover {
-    filter: brightness(90%);
+    border: 2px solid black;
 }
