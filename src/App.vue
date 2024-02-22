@@ -24,7 +24,7 @@
                     v-for="(_, index) in 4" :key="index"
                 ></span>
             </div>
-            <div class="wrapper__complexity" v-for="item in complexity">
+            <div class="wrapper__complexity" v-for="item in complexity" :key="item.value">
                 <input type="radio" :id="item.difficult" name="difficulty" v-model="selectedDifficulty" :value="item.value" :checked="selectedDifficulty === item.value" />
                 <label :for="item.difficult">{{item.name}}</label>
             </div>
