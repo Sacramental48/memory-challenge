@@ -43,7 +43,7 @@ export default {
             myChoose: [],
             highlitedSquares: [],
             isStartRound: false,
-            isNextStep: false,
+            canIClick: false,
             isGameOver: false,
             timer: {
                 easy: 1500, 
@@ -57,7 +57,13 @@ export default {
             ],
             selectedDifficulty: 'easy',
             timeouts: [],
-                
+            audios: {
+                0: require('@/assets/sounds/sounds_1.mp3'),
+                1: require('@/assets/sounds/sounds_2.mp3'),
+                2: require('@/assets/sounds/sounds_3.mp3'),
+                3: require('@/assets/sounds/sounds_4.mp3'),
+
+            }   
         }
     },
     methods: {
@@ -66,28 +72,27 @@ export default {
         },
 
         startGame() {
-            if(this.isStartRound === false) {
-                this.rounds = 0;
-                this.isStartRound = true;
-                this.isGameOver = false;
+            this.rounds = 0;
+            this.isStartRound = true;
+            this.isGameOver = false;
 
-                setTimeout(() => {
-                    this.generateSequence();
-                }, 0);
-            }
+            setTimeout(() => {
+                this.generateSequence();
+            }, 0);
         },
 
         async generateSequence() {
             this.rounds++;
-
+            this.canIClick = false;
             const randomIndex = Math.floor(Math.random() * 4);
             this.step.push(randomIndex);
 
             for(let item of this.step) {
-
                 await new Promise(resolve => {
+                    const audio = new Audio(this.audios[item]);
                     const timeoutIdPush = setTimeout(() => {
                         this.highlitedSquares.push(item);
+                        audio.play();
                         resolve();
                     }, this.selectedTimer);
                     this.timeouts.push(timeoutIdPush);
@@ -100,12 +105,12 @@ export default {
                     this.timeouts.push(timeoutIdColor);
                 });
             }
+            this.canIClick = true;
             return this.step;
         },
 
         endGame() {
             this.isStartRound = false;
-            this.isNextStep = false;
             this.step = [];
             this.myChoose = [];
             this.isGameOver = true;
@@ -116,23 +121,24 @@ export default {
         },
 
         nextStep() {
+            this.myChoose = [];
             setTimeout(() => {
                 this.generateSequence();
-                this.myChoose = [];
             }, 1000);
         },
 
         chooseCorrectSquare(index) {
-             if (this.isStartRound) {
-                console.log(this.selectedTimer);
+            const audio = new Audio(this.audios[index]);
+             if (this.canIClick) {
                 this.myChoose.push(index);
+                audio.play();
                 if (this.myChoose.length === this.step.length) {
-                    if (this.isArrayEqual(this.myChoose, this.step)) {
-                        this.isNextStep = true;
+                     if (this.isArrayEqual(this.myChoose, this.step)) {
                         this.nextStep();
                         return true;
                     } else {
                         this.isStartRound = false;
+                        this.canIClick = false;
                         this.isGameOver = true;
                         return false;
                     }
