@@ -31,11 +31,6 @@
     background-color: #1ad640;
 }
 
-.wrapper__buttons {
-    display: flex;
-    gap: 20px;
-}
-
 .wrapper__group {
     display: flex;
     flex-direction: column;

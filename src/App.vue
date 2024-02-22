@@ -94,14 +94,14 @@ export default {
                         this.highlitedSquares.push(item);
                         audio.play();
                         resolve();
-                    }, this.selectedTimer);
+                    }, this.selectedTimer / 2);
                     this.timeouts.push(timeoutIdPush);
                 });
                 await new Promise(resolve => {
                     const timeoutIdColor = setTimeout(() => {
                         this.highlitedSquares = [];
                         resolve();
-                    }, 400);
+                    }, this.selectedTimer / 2);
                     this.timeouts.push(timeoutIdColor);
                 });
             }
@@ -121,29 +121,38 @@ export default {
         },
 
         nextStep() {
-            this.myChoose = [];
             setTimeout(() => {
+                this.myChoose = [];
                 this.generateSequence();
             }, 1000);
         },
 
         chooseCorrectSquare(index) {
             const audio = new Audio(this.audios[index]);
-             if (this.canIClick) {
-                this.myChoose.push(index);
-                audio.play();
-                if (this.myChoose.length === this.step.length) {
-                     if (this.isArrayEqual(this.myChoose, this.step)) {
-                        this.nextStep();
-                        return true;
-                    } else {
-                        this.isStartRound = false;
-                        this.canIClick = false;
-                        this.isGameOver = true;
-                        return false;
+            if (this.canIClick) {
+                if (this.step[this.myChoose.length] === index) {
+                    this.myChoose.push(index);
+                    audio.play();
+                    if (this.myChoose.length === this.step.length) {
+                        if (this.isArrayEqual(this.myChoose, this.step)) {
+                            this.nextStep();
+                            return true;
+                        } else {
+                            this.isStartRound = false;
+                            this.canIClick = false;
+                            this.isGameOver = true;
+                            return false;
+                        }
                     }
+                    return true;
+                } else {
+                    this.isStartRound = false;
+                    this.canIClick = false;
+                    this.isGameOver = true;
+                    return false;
                 }
             }
+            return false;
         },
         isArrayEqual(arr1, arr2) {
             for(let i = 0; i < arr1.length; i++) {
