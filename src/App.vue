@@ -24,6 +24,10 @@
                     v-for="(_, index) in 4" :key="index"
                 ></span>
             </div>
+            <div class="wrapper__complexity" v-for="item in complexity">
+                <input type="radio" :id="item.difficult" name="difficulty" v-model="selectedDifficulty" :value="item.value" :checked="selectedDifficulty === item.value" />
+                <label :for="item.difficult">{{item.name}}</label>
+            </div>
         </div>
     </div>
 </template>
@@ -33,7 +37,7 @@ export default {
     name: 'App',
     data() {
         return {
-            colors: ['red', 'green', 'blue', 'orange'],
+            colors: ['green', 'red', 'orange', 'blue'],
             rounds: 0,
             step: [],
             myChoose: [],
@@ -41,7 +45,19 @@ export default {
             isStartRound: false,
             isNextStep: false,
             isGameOver: false,
-            timer: {'level-easy': 1500, 'level-meduim': 1000, 'level-hard': 400}
+            timer: {
+                easy: 1500, 
+                medium: 1000, 
+                hard: 400
+            },
+            complexity: [
+                {difficult: 'easy', name: 'Easy', value: 'easy', checked: true},
+                {difficult: 'medium', name: 'Medium', value: 'medium', checked: false},
+                {difficult: 'hard', name: 'Hard', value: 'hard', checked: false}
+            ],
+            selectedDifficulty: 'easy',
+            timeouts: [],
+                
         }
     },
     methods: {
@@ -70,16 +86,18 @@ export default {
             for(let item of this.step) {
 
                 await new Promise(resolve => {
-                    setTimeout(() => {
+                    const timeoutIdPush = setTimeout(() => {
                         this.highlitedSquares.push(item);
                         resolve();
-                    }, this.timer['level-easy']);
+                    }, this.selectedTimer);
+                    this.timeouts.push(timeoutIdPush);
                 });
                 await new Promise(resolve => {
-                    setTimeout(() => {
+                    const timeoutIdColor = setTimeout(() => {
                         this.highlitedSquares = [];
                         resolve();
-                    }, 500);
+                    }, 400);
+                    this.timeouts.push(timeoutIdColor);
                 });
             }
             return this.step;
@@ -91,6 +109,10 @@ export default {
             this.step = [];
             this.myChoose = [];
             this.isGameOver = true;
+            this.highlitedSquares = [];
+            this.timeouts.forEach(timeoutId => {
+                clearTimeout(timeoutId);
+            });
         },
 
         nextStep() {
@@ -102,6 +124,7 @@ export default {
 
         chooseCorrectSquare(index) {
              if (this.isStartRound) {
+                console.log(this.selectedTimer);
                 this.myChoose.push(index);
                 if (this.myChoose.length === this.step.length) {
                     if (this.isArrayEqual(this.myChoose, this.step)) {
@@ -124,6 +147,11 @@ export default {
             }
             return true;
         }
-    }
+    },
+    computed: {
+        selectedTimer() {
+            return this.timer[this.selectedDifficulty];
+        }
+    },
 }
 </script>
